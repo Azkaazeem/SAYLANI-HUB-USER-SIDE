@@ -1,8 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-    --primary-green: #66b032;
-    --primary-blue: #0057a8;
-    --white: white;
-    --gradient-color: linear-gradient(to :left, #0057a8 , #66b032 );
+    --color-primary-green: #66b032;
+    --color-primary-blue: #0057a8;
+    --color-white: white;
 }

@@ -1,10 +1,10 @@
 import "./App.css";
-import AuthHeader from "./Comp/AuthHeader";
+import Signup from "./Pages/Signup";
 
 function App() {
   return (
     <>
-      <AuthHeader/>
+      <Signup/>
     </>
   )
 }

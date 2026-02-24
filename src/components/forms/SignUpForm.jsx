@@ -3,7 +3,7 @@ import { Logo, FormHeading, AuthLinkText, SocialLoginGroup } from '../Shared';
 import Label from '../ui/Label';
 import Input from '../ui/Input';
 import FileUpload from '../ui/FileUpload';
-import Button from '../ui/Button';
+import Button from '../ui/button';
 import Divider from '../ui/Divider';
 import { EyeOff } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';

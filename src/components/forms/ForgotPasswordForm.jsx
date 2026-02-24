@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Logo, FormHeading } from '../Shared';
 import Label from '../ui/Label';
 import Input from '../ui/Input';
-import Button from '../ui/Button';
+import Button from '../ui/button';
 import { supabase } from '../lib/supabaseClient';
 import Swal from 'sweetalert2';
 import { ArrowLeft } from 'lucide-react';

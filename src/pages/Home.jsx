@@ -37,6 +37,7 @@ const Home = () => {
       
       {/* 1. HERO SECTION (100vh) */}
       <div className="relative h-screen flex items-center justify-center overflow-hidden">
+   
         
 {/* Background Image (Massive IT Classroom Vibe) */}
         <div 

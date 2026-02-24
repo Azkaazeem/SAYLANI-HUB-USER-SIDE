@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import AuthPage from './pages/AuthPage';
 import PlaceholderPage from './pages/PlaceholderPage';
 import LostFound from './pages/LostFound';
+import Complaints from './pages/Complaints';
 
 function App() {
   const [isDark, setIsDark] = useState(false);
@@ -38,7 +39,7 @@ function App() {
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/features" element={<PlaceholderPage title="Features" />} />
           <Route path="/lost-found" element={<LostFound />} />
-          <Route path="/complaints" element={<PlaceholderPage title="Complaints" />} />
+          <Route path="/complaints" element={<Complaints />} />
           <Route path="/volunteer" element={<PlaceholderPage title="Volunteer" />} />
           <Route path="/about" element={<PlaceholderPage title="About Us" />} />
           <Route path="/contact" element={<PlaceholderPage title="Contact" />} />

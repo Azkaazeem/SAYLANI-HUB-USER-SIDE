@@ -70,7 +70,6 @@ const LostFound = () => {
     }
 
     if (itemsData && itemsData.length > 0) {
-      // JavaScript mein filter karein (Sirf wo posts rakhein jo delete nahi huin)
       const activeItems = itemsData.filter(item => item.is_deleted !== true);
 
       if (activeItems.length === 0) {
@@ -112,7 +111,7 @@ const LostFound = () => {
         icon: 'info',
         title: 'Login Required',
         text: 'You need to be logged in to report an item.',
-        confirmButtonColor: '#0057a8'
+        confirmButtonColor: '#2563eb' // Blue button
       });
       return;
     }
@@ -239,15 +238,15 @@ const LostFound = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 mb-8">
           <div>
-            <h1 className="text-3xl font-extrabold text-primary-blue dark:text-white flex items-center gap-3">
-              <Search className="text-primary-green" size={32} /> Lost & Found
+            <h1 className="text-3xl font-extrabold text-gray-800 dark:text-white flex items-center gap-3">
+              <Search className="text-blue-600" size={32} /> Lost & Found
             </h1>
             <p className="text-gray-500 dark:text-gray-400 mt-2 font-medium">Help the community recover their belongings.</p>
           </div>
           
           <button 
             onClick={handleReportClick}
-            className="mt-4 md:mt-0 bg-gradient-to-r from-primary-blue to-primary-green hover:brightness-110 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 flex items-center gap-2"
+            className="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 flex items-center gap-2"
           >
             <PlusCircle size={20} /> Report an Item
           </button>
@@ -259,7 +258,7 @@ const LostFound = () => {
               <button 
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-5 sm:px-6 py-2.5 rounded-full font-bold transition-all duration-300 whitespace-nowrap ${filter === f ? 'bg-primary-blue text-white shadow-md' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                className={`px-5 sm:px-6 py-2.5 rounded-full font-bold transition-all duration-300 whitespace-nowrap ${filter === f ? 'bg-blue-600 text-white shadow-md' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
               >
                 {f}
               </button>
@@ -268,20 +267,20 @@ const LostFound = () => {
 
           <div className="relative w-full md:w-80 group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search size={18} className="text-gray-400 group-focus-within:text-primary-blue transition-colors" />
+              <Search size={18} className="text-gray-400 group-focus-within:text-blue-600 transition-colors" />
             </div>
             <input
               type="text"
               placeholder="Search by name, campus..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 rounded-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 focus:border-primary-blue transition-all shadow-sm"
+              className="w-full pl-11 pr-4 py-3 rounded-full border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 transition-all shadow-sm"
             />
           </div>
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-20"><Loader2 className="w-10 h-10 animate-spin text-primary-blue" /></div>
+          <div className="flex justify-center py-20"><Loader2 className="w-10 h-10 animate-spin text-blue-600" /></div>
         ) : filteredItems.length === 0 ? (
           <div className="text-center py-20 bg-white dark:bg-gray-800 rounded-3xl border border-dashed border-gray-300 dark:border-gray-700">
             <Search className="mx-auto h-16 w-16 text-gray-300 dark:text-gray-600 mb-4" />
@@ -306,7 +305,7 @@ const LostFound = () => {
                   
                   {currentUser && (currentUser.id === item.user_id || userRole === 'admin') && (
                     <div className="absolute top-4 right-4 flex gap-2">
-                      <button onClick={() => handleEditClick(item)} className="p-2 bg-white/90 hover:bg-white text-primary-blue rounded-full shadow-md transition-transform hover:scale-110" title="Edit Post">
+                      <button onClick={() => handleEditClick(item)} className="p-2 bg-white/90 hover:bg-white text-blue-600 rounded-full shadow-md transition-transform hover:scale-110" title="Edit Post">
                         <Edit size={16} />
                       </button>
                       <button onClick={() => handleDeleteClick(item.id)} className="p-2 bg-white/90 hover:bg-white text-red-500 rounded-full shadow-md transition-transform hover:scale-110" title="Remove Post">
@@ -320,7 +319,7 @@ const LostFound = () => {
                   <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2 line-clamp-1">{item.title}</h3>
                   
                   {item.campus && (
-                    <div className="flex items-center text-sm text-primary-blue dark:text-blue-400 font-semibold mb-3">
+                    <div className="flex items-center text-sm text-blue-600 dark:text-blue-400 font-semibold mb-3">
                       <MapPin size={16} className="mr-1 shrink-0" />
                       <span className="truncate">{item.campus}</span>
                     </div>
@@ -350,7 +349,7 @@ const LostFound = () => {
             <button className="absolute top-6 right-6 text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors" onClick={() => setIsModalOpen(false)}>
               <XCircle size={28} />
             </button>
-            <h2 className="text-2xl font-bold text-primary-blue dark:text-white mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
               {editId ? 'Edit Post' : 'Report an Item'}
             </h2>
             
@@ -366,7 +365,7 @@ const LostFound = () => {
 
               {userRole === 'admin' && editId && (
                  <div className="mb-4">
-                   <select value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-primary-green font-bold text-sm bg-green-50 dark:bg-green-900/10">
+                   <select value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-blue-600 font-bold text-sm bg-blue-50 dark:bg-blue-900/10">
                      <option value="Pending">Status: Pending</option>
                      <option value="Resolved">Status: Resolved (Returned/Found)</option>
                    </select>
@@ -374,14 +373,14 @@ const LostFound = () => {
               )}
 
               <div>
-                <input type="text" placeholder="Item Name (e.g., Blue Wallet)" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-primary-blue focus:ring-2 focus:ring-primary-blue/20" required />
+                <input type="text" placeholder="Item Name (e.g., Blue Wallet)" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20" required />
               </div>
               
               <div>
                 <select 
                   value={formData.campus} 
                   onChange={(e) => setFormData({...formData, campus: e.target.value})} 
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 focus:outline-none focus:border-primary-blue focus:ring-2 focus:ring-primary-blue/20 appearance-none bg-no-repeat"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 appearance-none bg-no-repeat"
                   style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundSize: '1.5em 1.5em' }}
                   required
                 >
@@ -396,7 +395,7 @@ const LostFound = () => {
               </div>
 
               <div>
-                <textarea rows="3" placeholder="Description details..." value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-primary-blue focus:ring-2 focus:ring-primary-blue/20 resize-none" required></textarea>
+                <textarea rows="3" placeholder="Description details..." value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 resize-none" required></textarea>
               </div>
 
               <div 
@@ -414,7 +413,7 @@ const LostFound = () => {
                 <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
               </div>
 
-              <button type="submit" disabled={uploading} className="w-full bg-primary-blue hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex justify-center items-center">
+              <button type="submit" disabled={uploading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex justify-center items-center">
                 {uploading ? <Loader2 className="animate-spin" /> : (editId ? 'Update Post' : 'Submit Report')}
               </button>
             </form>

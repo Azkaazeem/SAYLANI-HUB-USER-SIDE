@@ -27,17 +27,17 @@ const Volunteer = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [selectedApp, setSelectedApp] = useState(null); 
-  
+  const [selectedApp, setSelectedApp] = useState(null);
+
   // State for Direct Download ID Card
   const [appToPrint, setAppToPrint] = useState(null);
-  
+
   const [currentUser, setCurrentUser] = useState(null);
   const [userRole, setUserRole] = useState('guest');
-  
+
   // Form States (Sirf zaroori fields)
-  const [formData, setFormData] = useState({ 
-    full_name: '', roll_no: '', phone: '', email: '', 
+  const [formData, setFormData] = useState({
+    full_name: '', roll_no: '', phone: '', email: '',
     event_name: '', event_timing: '', event_location: '', status: 'Pending'
   });
   const [imageFile, setImageFile] = useState(null);
@@ -72,9 +72,9 @@ const Volunteer = () => {
 
     if (!error && appData) {
       const visibleData = appData.filter(app => {
-        if (currentRole === 'admin') return true; 
-        if (user && app.user_id === user.id) return true; 
-        return false; 
+        if (currentRole === 'admin') return true;
+        if (user && app.user_id === user.id) return true;
+        return false;
       });
       setApplications(visibleData);
     }
@@ -109,9 +109,8 @@ const Volunteer = () => {
     setIsModalOpen(true);
   };
 
-  // Direct trigger print/download 
   const handleDownloadIdCard = (app) => {
-    if(app.status !== 'Approved') {
+    if ((app.status || '').toLowerCase() !== 'approved') {
       Swal.fire({ icon: 'info', title: 'Approval Pending', text: 'You can download the ID card once Admin approves it.', confirmButtonColor: '#66b032' });
       return;
     }
@@ -129,7 +128,7 @@ const Volunteer = () => {
     }
 
     setSubmitting(true);
-    let imageUrl = previewUrl; 
+    let imageUrl = previewUrl;
 
     if (imageFile) {
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
@@ -159,8 +158,8 @@ const Volunteer = () => {
       do {
         newIdNo = String(Math.floor(Math.random() * 100000) + 1).padStart(6, '0');
       } while (existingIds.includes(newIdNo));
-      
-      payload.id_card_no = newIdNo; 
+
+      payload.id_card_no = newIdNo;
       const { error } = await supabase.from('volunteer_applications').insert([payload]);
       dbError = error;
     }
@@ -183,7 +182,7 @@ const Volunteer = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-10 px-4 md:px-8 animate-page-fade relative">
-      
+
       {/* MAIN CONTENT: Hidden during print */}
       <div className="max-w-7xl mx-auto print:hidden">
         <div className="flex flex-col md:flex-row justify-between items-center bg-white dark:bg-gray-800 p-6 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 mb-8">
@@ -236,7 +235,7 @@ const Volunteer = () => {
                         {formatDate(app.created_at)}
                       </td>
                       <td className="p-5">
-                        <span className={`px-3 py-1 text-xs font-bold rounded-full ${app.status === 'Approved' ? 'bg-green-100 text-green-700' : app.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>
+                        <span className={`px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider ${(app.status || '').toLowerCase() === 'approved' ? 'bg-green-100 text-green-700' : (app.status || '').toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>
                           {app.status}
                         </span>
                       </td>
@@ -267,7 +266,7 @@ const Volunteer = () => {
           <div className="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] shadow-2xl w-full max-w-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
             <button className="absolute top-6 right-6 text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors" onClick={() => setIsModalOpen(false)}><XCircle size={28} /></button>
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">{selectedApp ? 'Manage Application' : 'Volunteer Registration Form'}</h2>
-            
+
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Image Upload */}
               <div className="flex flex-col items-center mb-6">
@@ -275,27 +274,27 @@ const Volunteer = () => {
                   {previewUrl ? <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gray-50 flex flex-col items-center justify-center text-gray-400"><ImageIcon size={24} /></div>}
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><span className="text-white text-xs font-bold">Upload</span></div>
                 </div>
-                <input type="file" ref={fileInputRef} onChange={(e) => { if(e.target.files[0]) { setImageFile(e.target.files[0]); setPreviewUrl(URL.createObjectURL(e.target.files[0])); } }} className="hidden" accept="image/*" />
+                <input type="file" ref={fileInputRef} onChange={(e) => { if (e.target.files[0]) { setImageFile(e.target.files[0]); setPreviewUrl(URL.createObjectURL(e.target.files[0])); } }} className="hidden" accept="image/*" />
               </div>
 
               {/* USER INPUTS */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div><label className="text-xs font-bold text-gray-500 mb-1 block">Full Name</label><input type="text" placeholder="Ali Raza" value={formData.full_name} onChange={(e) => setFormData({...formData, full_name: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-[#65A338]" required disabled={userRole === 'admin' && selectedApp} /></div>
-                <div><label className="text-xs font-bold text-gray-500 mb-1 block">Roll No</label><input type="text" placeholder="e.g. 263541" value={formData.roll_no} onChange={(e) => setFormData({...formData, roll_no: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-[#65A338]" required disabled={userRole === 'admin' && selectedApp} /></div>
-                <div><label className="text-xs font-bold text-gray-500 mb-1 block">Mobile No</label><input type="tel" placeholder="0300-1234567" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-[#65A338]" required disabled={userRole === 'admin' && selectedApp} /></div>
-                <div><label className="text-xs font-bold text-gray-500 mb-1 block">Email</label><input type="email" placeholder="ali@gmail.com" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-[#65A338]" required disabled={userRole === 'admin' && selectedApp} /></div>
+                <div><label className="text-xs font-bold text-gray-500 mb-1 block">Full Name</label><input type="text" placeholder="Ali Raza" value={formData.full_name} onChange={(e) => setFormData({ ...formData, full_name: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-[#65A338]" required disabled={userRole === 'admin' && selectedApp} /></div>
+                <div><label className="text-xs font-bold text-gray-500 mb-1 block">Roll No</label><input type="text" placeholder="e.g. 263541" value={formData.roll_no} onChange={(e) => setFormData({ ...formData, roll_no: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-[#65A338]" required disabled={userRole === 'admin' && selectedApp} /></div>
+                <div><label className="text-xs font-bold text-gray-500 mb-1 block">Mobile No</label><input type="tel" placeholder="0300-1234567" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-[#65A338]" required disabled={userRole === 'admin' && selectedApp} /></div>
+                <div><label className="text-xs font-bold text-gray-500 mb-1 block">Email</label><input type="email" placeholder="ali@gmail.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:bg-gray-900 dark:text-white focus:outline-none focus:border-[#65A338]" required disabled={userRole === 'admin' && selectedApp} /></div>
               </div>
 
               {/* ADMIN INPUTS */}
               {userRole === 'admin' && (
                 <div className="border-t-2 border-dashed border-gray-200 pt-6 mt-6">
-                   <h3 className="text-lg font-bold text-[#014990] mb-4 flex items-center gap-2"><CheckCircle size={20}/> Admin Controls</h3>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                     <div><label className="text-xs font-bold text-gray-500 mb-1 block">Status Update</label><select value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})} className="w-full px-4 py-3 rounded-xl border-2 border-[#65A338] bg-green-50 font-bold text-sm focus:outline-none"><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select></div>
-                     <div><label className="text-xs font-bold text-gray-500 mb-1 block">Assign Event</label><select value={formData.event_name} onChange={(e) => setFormData({...formData, event_name: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#014990]"><option value="">-- Select Event --</option>{events.map(ev => <option key={ev} value={ev}>{ev}</option>)}</select></div>
-                     <div><label className="text-xs font-bold text-gray-500 mb-1 block">Event Timing</label><select value={formData.event_timing} onChange={(e) => setFormData({...formData, event_timing: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#014990]"><option value="">-- Select Timing --</option>{timings.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
-                     <div><label className="text-xs font-bold text-gray-500 mb-1 block">Event Location / Campus</label><input type="text" placeholder="e.g. Bahadurabad Campus" value={formData.event_location} onChange={(e) => setFormData({...formData, event_location: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#014990]" /></div>
-                   </div>
+                  <h3 className="text-lg font-bold text-[#014990] mb-4 flex items-center gap-2"><CheckCircle size={20} /> Admin Controls</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label className="text-xs font-bold text-gray-500 mb-1 block">Status Update</label><select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} className="w-full px-4 py-3 rounded-xl border-2 border-[#65A338] bg-green-50 font-bold text-sm focus:outline-none"><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select></div>
+                    <div><label className="text-xs font-bold text-gray-500 mb-1 block">Assign Event</label><select value={formData.event_name} onChange={(e) => setFormData({ ...formData, event_name: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#014990]"><option value="">-- Select Event --</option>{events.map(ev => <option key={ev} value={ev}>{ev}</option>)}</select></div>
+                    <div><label className="text-xs font-bold text-gray-500 mb-1 block">Event Timing</label><select value={formData.event_timing} onChange={(e) => setFormData({ ...formData, event_timing: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#014990]"><option value="">-- Select Timing --</option>{timings.map(t => <option key={t} value={t}>{t}</option>)}</select></div>
+                    <div><label className="text-xs font-bold text-gray-500 mb-1 block">Event Location / Campus</label><input type="text" placeholder="e.g. Bahadurabad Campus" value={formData.event_location} onChange={(e) => setFormData({ ...formData, event_location: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-[#014990]" /></div>
+                  </div>
                 </div>
               )}
 
@@ -310,7 +309,7 @@ const Volunteer = () => {
       {/* PRINT VIEW ONLY: DITTO COPY DESIGN */}
       {appToPrint && (
         <div className="hidden print:flex flex-col md:flex-row gap-8 items-center justify-center min-h-screen bg-gray-100 p-4 font-sans absolute top-0 left-0 w-full z-[9999]">
-                 
+
           {/* ================= FRONT CARD ================= */}
           <div className="w-[320px] min-h-[500px] bg-white shadow-xl flex flex-col items-center border border-gray-200 shrink-0">
             <CardHeader />
@@ -323,7 +322,7 @@ const Volunteer = () => {
 
             <h1 className="text-3xl font-bold mt-4 text-black uppercase leading-tight text-center px-2 line-clamp-1">{appToPrint.full_name}</h1>
             <p className="text-lg text-black mt-1 mb-2">Volunteer</p>
-            
+
             <p className="text-lg mt-2 mb-6">
               <span className="font-bold">Roll No: </span> {appToPrint.roll_no}
             </p>
@@ -355,9 +354,9 @@ const Volunteer = () => {
             </div>
 
             <div className="w-full flex justify-center mt-6 mb-6">
-              <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=RollNo:${appToPrint.roll_no},Name:${appToPrint.full_name},ID:${appToPrint.id_card_no}`} 
-                alt="QR Code" 
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=RollNo:${appToPrint.roll_no},Name:${appToPrint.full_name},ID:${appToPrint.id_card_no}`}
+                alt="QR Code"
                 className="w-20 h-20"
               />
             </div>

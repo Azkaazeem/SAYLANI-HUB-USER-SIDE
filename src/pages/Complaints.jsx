@@ -153,8 +153,7 @@ const Complaints = () => {
       }
     }
   };
-
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title || !formData.description || !formData.room_info || !formData.campus) {
       Swal.fire({ icon: 'warning', title: 'Missing Fields', text: 'Please fill out all required fields, including Campus.' });
@@ -162,15 +161,26 @@ const Complaints = () => {
     }
 
     setUploading(true);
-    let imageUrl = previewUrl; 
+    let imageUrl = null; // Start mein null rakhein, previewUrl nahi
 
+    // Agar user ne tasveer attach ki hai
     if (imageFile) {
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
       const { error: uploadError } = await supabase.storage.from('smit-hub-images').upload(`complaints/${fileName}`, imageFile);
-      if (!uploadError) {
-        const { data } = supabase.storage.from('smit-hub-images').getPublicUrl(`complaints/${fileName}`);
-        imageUrl = data.publicUrl;
+      
+      // Agar upload fail ho jaye toh user ko batayen aur aage save na karein
+      if (uploadError) {
+        setUploading(false);
+        Swal.fire({ icon: 'error', title: 'Image Upload Failed', text: 'Storage bucket might be missing. Details: ' + uploadError.message });
+        return; 
       }
+      
+      // Agar upload successful ho jaye toh uska permanent link le lein
+      const { data } = supabase.storage.from('smit-hub-images').getPublicUrl(`complaints/${fileName}`);
+      imageUrl = data.publicUrl;
+    } else if (editId && previewUrl && !previewUrl.startsWith('blob:')) {
+      // Agar update kar rahay hain aur purani tasveer already majood hai
+      imageUrl = previewUrl;
     }
 
     const payload = {
@@ -197,7 +207,6 @@ const Complaints = () => {
       fetchData(); // Refresh Data
     }
   };
-
   const getStatusColor = (status) => {
     if (status === 'Resolved') return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border-green-200';
     if (status === 'In Progress') return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200';

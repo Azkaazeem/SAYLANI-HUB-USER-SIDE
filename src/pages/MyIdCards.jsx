@@ -25,7 +25,7 @@ const MyIdCards = () => {
     fetchMyCards();
   }, []);
 
-  const fetchMyCards = async () => {
+const fetchMyCards = async () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     
@@ -34,11 +34,12 @@ const MyIdCards = () => {
       return;
     }
 
+    // Yahan humne .ilike() use kiya hai jo capital aur small dono match karta hai
     const { data, error } = await supabase
       .from('volunteer_applications')
       .select('*')
       .eq('user_id', user.id)
-      .eq('status', 'Approved');
+      .ilike('status', 'approved');
 
     if (!error && data) setCards(data);
     setLoading(false);

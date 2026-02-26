@@ -1,19 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 
-const Input = ({ type = "text", placeholder, id, icon: Icon, ...props }) => {
+const Input = ({ icon: Icon, type = 'text', ...props }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Check karte hain ke kya yeh password field hai?
+  const isPassword = type === 'password';
+  
+  // Agar password field hai aur showPassword true hai, toh text dikhaye warna password
+  const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
+
   return (
-    <div className="relative group">
+    <div className="relative">
       <input
-        id={id}
-        type={type}
-        placeholder={placeholder}
-        className={`w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-blue/30 focus:border-primary-blue hover:border-primary-blue/50 transition-all duration-300 ease-in-out ${Icon ? 'pr-9' : ''}`}
+        type={inputType}
+        className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-[#0057a8] focus:border-[#0057a8] block p-2.5 pr-10 transition-colors"
         {...props}
       />
-      {Icon && (
-        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary-blue dark:group-focus-within:text-white transition-colors duration-300">
-          <Icon size={16} />
-        </div>
+      
+      {/* Agar password field hai toh clickable Button (Eye/EyeOff) dikhaye */}
+      {isPassword ? (
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
+        >
+          {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+        </button>
+      ) : (
+        /* Agar normal text/email field hai toh sirf static icon dikhaye */
+        Icon && (
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
+            <Icon size={20} />
+          </div>
+        )
       )}
     </div>
   );

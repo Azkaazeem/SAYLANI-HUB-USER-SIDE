@@ -17,6 +17,7 @@ const SignInForm = ({ onToggleMode, onForgotPassword }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Yeh wo main function hai jiske andar saara logic hona chahiye
   const handleSignIn = async (e) => {
     e.preventDefault();
 
@@ -31,6 +32,7 @@ const SignInForm = ({ onToggleMode, onForgotPassword }) => {
 
     setLoading(true);
 
+    // 1. Supabase mein login attempt
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
@@ -40,24 +42,41 @@ const SignInForm = ({ onToggleMode, onForgotPassword }) => {
       Swal.fire({ icon: 'error', title: 'Login Failed', text: error.message, confirmButtonColor: '#0057a8' });
       setLoading(false);
     } else {
-      // Check if logged in user is Admin
-      const isAdmin = data.user.email === 'admin@gmail.com';
+      // 2. Profile se role check karna
+      const { data: profileData } = await supabase
+        .from('smit_hub_profiles') // Agar aapki table ka naam alag hai to yahan change karein
+        .select('role')
+        .eq('id', data.user.id)
+        .single();
 
-      Swal.fire({
-        icon: 'success', 
-        title: 'Login Successful!', 
-        text: isAdmin ? 'Redirecting to Admin Panel...' : 'Welcome back to your account.',
-        confirmButtonColor: '#66b032', 
-        timer: 1500, 
-        showConfirmButton: false
-      }).then(() => {
-        // Swal message khatam hone ke baad redirect karega
-        if (isAdmin) {
-          window.location.href = 'https://saylani-hub-admin-side.vercel.app/';
-        } else {
+      // 3. Admin verify karna (Database role ya hardcoded email se)
+      const isAdmin = (profileData && profileData.role === 'admin') || data.user.email === 'admin@gmail.com';
+
+      if (isAdmin) {
+        // Admin ke liye success popup aur seedha /admin par redirect
+        Swal.fire({
+          icon: 'success', 
+          title: 'Admin Login', 
+          text: 'Welcome to Admin Dashboard',
+          confirmButtonColor: '#66b032', 
+          timer: 1000, 
+          showConfirmButton: false
+        }).then(() => {
+          navigate('/admin'); 
+        });
+      } else {
+        // Normal user ke liye success popup aur Home (/) par redirect
+        Swal.fire({
+          icon: 'success', 
+          title: 'Login Successful!', 
+          text: 'Welcome back!',
+          confirmButtonColor: '#66b032', 
+          timer: 1000, 
+          showConfirmButton: false
+        }).then(() => {
           navigate('/'); 
-        }
-      });
+        });
+      }
     }
   };
 
@@ -69,7 +88,7 @@ const SignInForm = ({ onToggleMode, onForgotPassword }) => {
       <div className="space-y-4 mb-4 mt-2">
         <div>
             <Label htmlFor="loginEmail">Email Address</Label>
-            <Input id="loginEmail" type="email" placeholder="admin@gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input id="loginEmail" type="email" placeholder="Enter Your Email" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div>
             <Label htmlFor="loginPassword">Password</Label>

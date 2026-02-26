@@ -24,9 +24,20 @@ export default function ManageComplaints() {
     fetchData();
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Delete this complaint?")) {
+const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: 'Delete Complaint?',
+      text: "This action cannot be undone!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (result.isConfirmed) {
       await supabase.from('complaints').delete().eq('id', id);
+      Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Complaint has been removed.', showConfirmButton: false, timer: 1500 });
       fetchData();
     }
   };

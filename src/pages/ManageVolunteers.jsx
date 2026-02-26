@@ -18,19 +18,30 @@ export default function ManageVolunteers() {
 
   useEffect(() => { fetchData(); }, []);
 
-  // Dropdown se status change karne ka function
-  const handleStatusChange = async (id, newStatus) => {
+const handleStatusChange = async (id, newStatus) => {
     const { error } = await supabase.from('volunteer_applications').update({ status: newStatus.toLowerCase() }).eq('id', id);
     if (error) {
-      alert("Error updating status: " + error.message);
+      Swal.fire({ icon: 'error', title: 'Update Failed', text: error.message });
     } else {
-      fetchData(); // Update hoty hi list refresh ho jayegi
+      Swal.fire({ icon: 'success', title: 'Status Updated', text: `Application marked as ${newStatus}.`, showConfirmButton: false, timer: 1500 });
+      fetchData(); 
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Delete this volunteer application?")) {
+    const result = await Swal.fire({
+      title: 'Delete Application?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (result.isConfirmed) {
       await supabase.from('volunteer_applications').delete().eq('id', id);
+      Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Application has been removed.', showConfirmButton: false, timer: 1500 });
       fetchData();
     }
   };

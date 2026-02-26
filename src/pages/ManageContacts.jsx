@@ -17,10 +17,20 @@ export default function ManageContacts() {
 
   useEffect(() => { fetchData(); }, []);
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Delete this message?")) {
-      // Yahan ghalti thi! Isey 'contacts' se 'contact_messages' kar diya hai
+ const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: 'Delete Message?',
+      text: "Are you sure you want to remove this message?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (result.isConfirmed) {
       await supabase.from('contact_messages').delete().eq('id', id);
+      Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Message has been removed.', showConfirmButton: false, timer: 1500 });
       fetchData();
     }
   };

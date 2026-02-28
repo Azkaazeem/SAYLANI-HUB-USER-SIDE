@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient'; 
+import { supabase } from '../lib/supabaseClient'; // Make sure this path is correct
 import { Bell, X, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom'; // 1. Navigate import kiya
 
 const NotificationSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const navigate = useNavigate(); // 2. Navigate hook initialize kiya
 
   useEffect(() => {
     fetchNotifications();
     
+    // Real-time listener for all new notifications
     const subscription = supabase
       .channel('public:notifications')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, payload => {
@@ -31,25 +30,16 @@ const NotificationSidebar = () => {
     if (!error && data) setNotifications(data);
   };
 
-  // 3. Click handle karne ka function
-  const handleNotificationClick = async (notif) => {
-    // Agar read nahi hai toh read mark karein
-    if (!notif.is_read) {
-      await supabase.from('notifications').update({ is_read: true }).eq('id', notif.id);
-      setNotifications(notifications.map(n => n.id === notif.id ? { ...n, is_read: true } : n));
-    }
-
-    // Agar link mojood hai toh wahan navigate karein aur sidebar close kar dein
-    if (notif.link) {
-      navigate(notif.link);
-      setIsOpen(false); 
-    }
+  const markAsRead = async (id) => {
+    await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+    setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
   };
 
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return (
     <>
+      {/* Notification Bell Icon */}
       <button 
         onClick={() => setIsOpen(true)}
         className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-full"
@@ -63,6 +53,7 @@ const NotificationSidebar = () => {
         )}
       </button>
 
+      {/* Overlay to close sidebar when clicking outside */}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity"
@@ -70,11 +61,13 @@ const NotificationSidebar = () => {
         ></div>
       )}
 
+      {/* Right Sidebar Panel */}
       <div 
         className={`fixed top-0 right-0 h-full w-80 sm:w-96 bg-white dark:bg-gray-800 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
+        {/* Sidebar Header with X close button */}
         <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
           <h2 className="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
             <Bell size={20} className="text-blue-600" /> Notifications
@@ -87,13 +80,14 @@ const NotificationSidebar = () => {
           </button>
         </div>
 
+        {/* Sidebar Notifications List */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
           {notifications.length > 0 ? (
             notifications.map((notif) => (
               <div 
                 key={notif.id} 
-                onClick={() => handleNotificationClick(notif)} // 4. Click function call
-                className={`p-4 mb-2 rounded-xl cursor-pointer transition-all border-l-4 hover:scale-[1.02] ${
+                onClick={() => markAsRead(notif.id)}
+                className={`p-4 mb-2 rounded-xl cursor-pointer transition-all border-l-4 ${
                   !notif.is_read 
                     ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 shadow-sm' 
                     : 'bg-white dark:bg-gray-800 border-transparent hover:bg-gray-50 dark:hover:bg-gray-700'

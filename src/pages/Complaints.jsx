@@ -191,6 +191,8 @@ const handleSubmit = async (e) => {
 
     setUploading(false);
 
+    
+
     if (dbError) {
       Swal.fire({ icon: 'error', title: 'Error', text: dbError.message });
     } else {

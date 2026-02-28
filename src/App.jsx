@@ -13,7 +13,6 @@ import Features from './pages/Features';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
-
 import DashboardLayout from './pages/DashboardLayout';
 
 function App() {
@@ -36,19 +35,18 @@ function App() {
     setIsDark(!isDark);
   };
 
-  const UserLayout = () => {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-        <Navbar isDark={isDark} toggleTheme={toggleTheme} />
-        <Outlet />
-      </div>
-    );
-  };
-
   return (
     <Router>
       <Routes>
-        <Route element={<UserLayout />}>
+        {/* Layout ko direct element mein wrap kiya gaya hai taake hook error na aaye */}
+        <Route 
+          element={
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+              <Navbar isDark={isDark} toggleTheme={toggleTheme} />
+              <Outlet />
+            </div>
+          }
+        >
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/features" element={<Features />} />

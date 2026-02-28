@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../components/lib/supabaseClient';
+import { supabase } from '../components/lib/supabaseClient'; // Path check kar lijiye ga
 import { Trash2, CheckCircle, Search, Clock, Activity, X } from 'lucide-react';
+import Swal from 'sweetalert2'; // Swal import karna zaroori hai
 
 export default function ManageComplaints() {
   const [data, setData] = useState([]);
@@ -17,12 +18,24 @@ export default function ManageComplaints() {
 
   useEffect(() => { fetchData(); }, []);
 
+  // YAHAN HUMNE NOTIFICATION WALA CODE SAHI JAGAH LAGA DIYA HAI SATH MEIN LINK BHI HAI
   const handleStatusChange = async (id, newStatus) => {
+    // 1. Pehle database mein complaint ka status update karo
     await supabase.from('complaints').update({ status: newStatus }).eq('id', id);
+    
+    // 2. Phir Notification bhejo sath mein 'link' pass karo
+    await supabase.from('notifications').insert([
+      { 
+        message: `Your complaint status has been updated to: ${newStatus}.`,
+        link: '/complaints' // User is notification par click karega toh is page par jayega
+      }
+    ]);
+
+    // 3. Table ko refresh karne ke liye data dobara mangwao
     fetchData();
   };
 
-const handleDelete = async (id) => {
+  const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: 'Delete Complaint?',
       text: "This action cannot be undone!",
@@ -76,7 +89,6 @@ const handleDelete = async (id) => {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50 dark:bg-slate-700/50 text-gray-600 dark:text-gray-300 border-b dark:border-slate-700">
-
               <th className="px-6 py-3 text-xs font-semibold uppercase">Attachment</th>
               <th className="px-6 py-3 text-xs font-semibold uppercase">Title / Info</th>
               <th className="px-6 py-3 text-xs font-semibold uppercase">Description</th>
@@ -144,7 +156,6 @@ const handleDelete = async (id) => {
             className="relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-2xl max-w-4xl max-h-[90vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-
             <button 
               onClick={closeImageModal}
               className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors z-10"

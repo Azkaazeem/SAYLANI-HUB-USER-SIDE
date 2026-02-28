@@ -215,7 +215,29 @@ const LostFound = () => {
     if (dbError) {
       Swal.fire({ icon: 'error', title: 'Error', text: dbError.message });
     } else {
-      Swal.fire({ icon: 'success', title: editId ? 'Updated Successfully!' : 'Posted Successfully!', showConfirmButton: false, timer: 1500 });
+      
+      // ==========================================
+      // NOTIFICATION LOGIC (NEWLY ADDED)
+      // ==========================================
+      if (!editId) { // Sirf new post par notification jaye, edit par nahi
+        const notificationMessage = `New ${formData.type} item reported: ${formData.title} at ${formData.campus}.`;
+        
+        const { error: notifError } = await supabase
+          .from('notifications')
+          .insert([{ message: notificationMessage }]);
+          
+        if (notifError) {
+          console.error("Failed to send notification:", notifError);
+        }
+      }
+      // ==========================================
+
+      Swal.fire({ 
+        icon: 'success', 
+        title: editId ? 'Updated Successfully!' : 'Posted Successfully!', 
+        showConfirmButton: false, 
+        timer: 1500 
+      });
       setIsModalOpen(false);
       fetchItems();
     }

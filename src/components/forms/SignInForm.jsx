@@ -82,11 +82,11 @@ const SignInForm = ({ onToggleMode, onForgotPassword }) => {
       <div className="space-y-4 mb-4 mt-2">
         <div>
             <Label htmlFor="loginEmail">Email Address</Label>
-            <Input id="loginEmail" type="email" placeholder="Enter Your Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input id="loginEmail" type="email" placeholder="admin@gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div>
             <Label htmlFor="loginPassword">Password</Label>
-            <Input id="loginPassword" type="password" icon={EyeOff} placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Input id="loginPassword" type="password" icon={EyeOff} placeholder="admin12345" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
       </div>
 
